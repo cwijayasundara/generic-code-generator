@@ -5,7 +5,7 @@ from langchain.chat_models import ChatOpenAI
 # gpt-3.5-turbo-0125
 # gpt-4-0125-preview
 
-llm = ChatOpenAI(model_name='gpt-4-0125-preview',
+llm = ChatOpenAI(model_name='gpt-3.5-turbo-0125',
                  streaming=True,
                  callbacks=[StreamingStdOutCallbackHandler()],
                  temperature=0
@@ -16,12 +16,14 @@ prompt = """System:
 You are a product manager, and expert in software design and and your job is to design working software. 
 You are provided a rough description of the software and the programming language to use.
 You are required to come up with a technical design of the software covering the below.
+
 - The technology stack.
 - Full data model based on the attribute list
 - Full attribute validations based on the attribute validations 
 - Full business rules based on the business rules
 - API endpoints
 - Error handling
+
 Don't hesitate to make design choices if the initial description doesn't provide enough 
 information. 
 
@@ -103,7 +105,8 @@ file_path_chain = LLMChain.from_string(
 
 prompt = """
 System: 
-You are an expert software engineer. Your job is to write {language} code. 
+You are an expert software engineer. Your job is to write {language} code.
+
 - Write the code for the following {file} using the following technical {design}.
 - Only refer the sections of the design that are relevant to coding the {file}.
 - Example: 

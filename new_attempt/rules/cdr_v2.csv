@@ -1,0 +1,46 @@
+,Attributes,Business Rules,Attribute Validations
+1,policy_ref : string,({Insurance or Reinsurance = Insurance}AND ({Platform = Asia}) OR {(Re)Insurer Unique Identifier Type = Lloyds Insurance Company Syndicate Number})),
+2,facility_ref : string,"({Insurance or Reinsurance = Insurance}AND ({Contract Type = ""Binding Authority""} OR {Contract Type = ""LineSlip""}))",
+3,Treaty_Facultative : string,(Insurance or Reinsurance = Reinsurance),
+4,Proportional_Non-Proportional : string,(Insurance or Reinsurance = Reinsurance),
+5,Reinsurance_Type : string,(Insurance or Reinsurance = Reinsurance),"Value In {Quota Share, Excess of Loss, Surplus, Stop Loss}"
+6,Lloyd's_Renewal_Indicator : string,"{Regulatory Risk Location - Territory = AU}
+AND
+({Tax and Regulatory Coverages IS ANY OF (Third Party Liability, Warrant Breach in Transaction, Tax Liability)} OR {Tax and Regulatory Perils - Included = Product Liability}))
+OR
+({Regulatory Risk Location - Territory = AU}
+AND 
+{Risk Code IS ANY OF (D2, D3, D6, D7, D8, D9)}
+AND
+{Tax and Regulatory Coverages IS ANY OF (Liability, Employers' Liability, Tax Liability, Business Merger or Restructure, Warrant Breach in Transaction)})",
+7,Retrocession : char,(Insurance or Reinsurance = Reinsurance),"Value in {Y,N}"
+8,Policyholder_Classification : string,(Insurance or Reinsurance = Insurance),"Value in {Consumer, Commercial - Micro-enterprise, Commercial - Small Business, Commercial - Large Risk, Commercial - Other, Guarantor, Charity - Eligible, Charity - Not Eligible, Trustee - Eligible, Trustee - Not Eligible}"
+9,Policyholder_Location_Street : string,"(Regulatory Coverage != ""Kidnap and Ransom"" )",
+10,Policyholder_Location_City : string,"(Regulatory Coverage != ""Kidnap and Ransom"" )",
+11,Policyholder_Location_Country_Sub_Division : string,"(Regulatory Coverage != ""Kidnap and Ransom"" )",
+12,Policyholder_Location_ Zip_Postcode : string,"(Regulatory Coverage != ""Kidnap and Ransom"" )",
+13,Policyholder_Identification_Code : string,"({Insurance or Reinsurance = Insurance}AND{Policyholder Location - Country IS ANY OF (AU, NZ, PT, IT, ES)})OR({Insurance or Reinsurance = Reinsurance}AND({Regulatory Risk Location - Territory = US} OR {Policyholder Location - Country = US}))",
+14,Policyholder_Identification_Code_Set : string,"({Insurance or Reinsurance = Insurance}AND{Policyholder Location - Country IS ANY OF (AU, NZ, PT, IT, ES)})OR({Insurance or Reinsurance = Reinsurance}AND({Regulatory Risk Location - Territory = US} OR {Policyholder Location - Country = US}))",
+15,Policyholder_Industrial_Sector_Code : string,"{Insurance or Reinsurance = Insurance}
+AND{Policyholder Classification IS NOT Consumer})",
+16,Policyholder_Industrial_Sector_Code_Set : string,"{Insurance or Reinsurance = Insurance}
+AND
+{Policyholder Classification IS NOT Consumer})","Values In {NAICS (2012) Industry Group Code, UK SIC (2007) Section Code, ANZSIC 1292.0 Industry Class Code, APRA Occupation Code for Professional Indemnity, Hong Kong Insured Occupation Code}"
+17,Additional_Insured_Affiliation_Type : string,"{Insurance or Reinsurance = Insurance}
+AND {Policyholder Classification IS NOT Consumer}
+AND
+{Location of Policyholder - Country = DE}
+AND
+({Lloyd's Platform = Lloyd's Insurance Company}
+OR
+{(Re)Insurer Unique Identifier Type = Lloyd's Insurance Company Syndicate Number})
+AND
+{Countries in which Additional Insureds are located IS ANY OF (GB, MC)}",
+18,Additional_Insured_Name : string,"{Insurance or Reinsurance = Insurance} AND
+(({Additional Insured Location - Country IS ANY OF (ES, CA)} AND {Insurable Interest Type Group IS ANY OF (Movable Property, Occupations or Industries, Insured Persons)} AND {Transit or Storage Condition IS NOT Goods in Storage (more than 60 Days)})
+OR
+({Policyholder Classification IS NOT Consumer} AND {Policyholder Location - Country = DE} AND {(Re)Insurer Unique Identifier Type = Lloyd's Insurance Company Syndicate Number} AND {Additional Insured Location - Country IS ANY OF (GB, MC)}))",
+19,Surplus_Lines_Transaction_Number : string,"{US Classification = US Surplus Lines}
+AND
+{Home State = US-NJ}",
+20,Surplus_Lines_Broker_Licence_Number : string,{US Classification = US Surplus Lines},

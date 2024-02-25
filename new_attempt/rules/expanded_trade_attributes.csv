@@ -1,0 +1,21 @@
+Attributes,Attribute Validations,Business Rules
+Trade ID,Must be unique,Identify each trade uniquely
+Trade Date,Must be a valid date in the format YYYY-MM-DD,Ensure trade date is not in the future
+Settlement Date,Must be a valid date in the format YYYY-MM-DD and after Trade Date,Settlement date must be after trade date considering the market settlement cycle
+Trade Amount,Must be a positive number,Trade amount should reflect the actual transaction amount
+Currency,Must be a valid ISO currency code,Currency code should be valid as per international standards
+Counterparty ID,Must be an existing counterparty ID in the system,Counterparty should be recognized and valid in the trading system
+Trade Type,"Must be a recognized trade type (e.g., Buy, Sell, Short, Cover)",Trade type should define the nature of the trade
+Instrument ID,Must be a valid instrument/security ID,Instrument ID should be valid and recognized in the trading system
+Trade Status,"Must represent the current state of the trade (e.g., Executed, Cancelled)",Trade status should reflect the current state of the trade accurately
+Execution Venue,Must be a recognized and valid venue,Execution venue should be authorized and recognized
+Broker ID,Must be a valid broker ID if applicable,Broker should be authorized if involved in the trade
+Portfolio ID,Must be associated with a valid portfolio,Portfolio ID should be valid and active
+Trader ID,Must be a valid trader ID,Trader should be authorized and recognized in the trading system
+Confirmation ID,Must match with the trade details and be unique,Confirmation should match the trade details and ensure the trade is validated
+Clearing House,Must be a recognized and participating clearing house if applicable,"Clearing house, if involved, should be recognized and authorized"
+Margin Amount,Must be a non-negative number,Margin amount should meet the requirements of the trade and market regulations
+Netting Agreement ID,Must be a valid agreement ID for trades under netting,Netting agreements should be valid and enforceable
+Collateral Type,Must specify the type of collateral if collateralized,Collateral should be adequate and as per the agreement terms
+Collateral Amount,Must be a non-negative number if collateralized,Collateral amount should be sufficient to cover the trade exposures
+Execution Time,Must be a valid timestamp in the format HH:MM:SS,Execution time should be recorded accurately and be within market operating hours
