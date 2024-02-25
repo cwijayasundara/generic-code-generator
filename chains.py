@@ -2,8 +2,7 @@ from langchain.callbacks import StreamingStdOutCallbackHandler
 from langchain.chains import LLMChain
 from langchain.chat_models import ChatOpenAI
 
-
-llm = ChatOpenAI(model_name='gpt-3.5-turbo-16k',
+llm = ChatOpenAI(model_name='gpt-4-0125-preview',
                  streaming=True,
                  callbacks=[StreamingStdOutCallbackHandler()],
                  temperature=0
@@ -23,7 +22,6 @@ product_manager_chain = LLMChain.from_string(
     llm=llm,
     template=prompt
 )
-
 
 prompt = """System: You are a Software engineering technical lead writing code in {language}. Your job is to come up 
 with a detailed description of all the necessary functions, classes, methods, unit tests for the code and attributes 
@@ -79,7 +77,6 @@ file_structure_chain = LLMChain.from_string(
     template=prompt
 )
 
-
 prompt = """System: Return the complete list of the file paths, including the folder structure using the following 
 list of {language} files. Only return well formed file paths: ./<FOLDER_NAME>/<FILE_NAME>.py
 
@@ -100,7 +97,6 @@ file_path_chain = LLMChain.from_string(
     llm=llm,
     template=prompt
 )
-
 
 prompt = """System: You are a software engineer. Your job is to write {language} code. Write the code for the 
 following file using the following description. Only return code! The code should be able to run in a {language} 
@@ -123,7 +119,6 @@ code_chain = LLMChain.from_string(
     llm=llm,
     template=prompt
 )
-
 
 prompt = """
 Return `<TRUE>` If the following {language} code contains non-implemented parts and return `<FALSE>` otherwise

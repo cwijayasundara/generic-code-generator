@@ -23,7 +23,7 @@ st.title("Code Generator")
 language = st.radio("Select Language:",
                     ["Python", "Java", "C#", "TypeScript", "Rust", "Kotlin"])
 
-request = st.text_area('Please Detail Your Desired Use Case for Code Generation! ', height=150)
+request = st.text_area('Please Detail Your Desired Use Case for Code Generation! ', height=500)
 app_name = st.text_input('Enter Project Name:')
 submit = st.button("submit", type="primary")
 
