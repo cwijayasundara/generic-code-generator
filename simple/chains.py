@@ -14,7 +14,7 @@ llm = ChatOpenAI(model_name='gpt-3.5-turbo-0125',
 prompt = """System: 
 
 You are a product manager, and expert in software design and and your job is to design working software. 
-You are provided a rough description of the software and the programming language to use.
+You are provided a rough description {input} of the software and the programming language {language} to use.
 You are required to come up with a technical design of the software covering the below.
 
 - The technology stack.
@@ -22,12 +22,11 @@ You are required to come up with a technical design of the software covering the
 - Full attribute validations based on the attribute validations 
 - Full business rules based on the business rules
 - API endpoints
-- Error handling
 
 Don't hesitate to make design choices if the initial description doesn't provide enough 
 information. 
 
-Don't generate code or unit tests at this stage!!
+Don't generate code or unit tests at this stage and return only the above asked artefacts!!
 
 programming_language: {language}
 

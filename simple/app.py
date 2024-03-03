@@ -15,13 +15,13 @@ business_rules_set = business_rules()
 business_rules_set = ', '.join(business_rules_set)
 
 
-def create_request(attributes,
-                   attribute_validations,
-                   business_rules):
+def create_request(attributes_list,
+                   attribute_validations_list,
+                   business_rules_list):
     return f"""create a fully functional microservice with the below requirements.
-    attributes :""" + attributes + """
-    attribute validations :""" + attribute_validations + """
-    business rules :""" + business_rules
+    attributes :""" + attributes_list + """
+    attribute validations :""" + attribute_validations_list + """
+    business rules :""" + business_rules_list
 
 
 request = create_request(attribute_set, attribute_validations_set, business_rules_set)

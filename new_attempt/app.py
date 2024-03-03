@@ -9,8 +9,6 @@ from utils import safe_write, attributes, attribute_validations, business_rules
 
 from chains import (
     product_manager_chain,
-    tech_lead_chain,
-    test_lead_chain,
     file_structure_chain,
     file_path_chain,
     code_chain,
@@ -21,24 +19,19 @@ from chains import (
 attributes = attributes()
 
 attribute_validations = attribute_validations()
-""" attribute_validations is a dictionary with the attributes as the key and the attribute_validations as the value.
-create a comma separated string with the format 'attribute: attribute_validation' """
 attribute_validations_str = ', '.join([f'{k}: {v}' for k, v in attribute_validations.items()])
 
 business_rules = business_rules()
-""" business_rules is a dictionary with the attributes as the key and the business_rules as the value.
-create a comma separated string with the format 'attribute: business_rule' """
 business_rules_str = ', '.join([f'{k}: {v}' for k, v in business_rules.items()])
 
 
 def create_request(attribute_str,
-                   attribute_validations_str,
-                   business_rules_str):
-
+                   attribute_validations_list,
+                   business_rules_list):
     return f"""create a fully functional microservice with the below requirements.
     attributes :""" + attribute_str + """
-    attribute validations :""" + attribute_validations_str + """
-    business rules :""" + business_rules_str + """. 
+    attribute validations :""" + attribute_validations_list + """
+    business rules :""" + business_rules_list + """. 
     Use Redis as the database and generate working code and unit
     and integration tests for the code"""
 
@@ -51,7 +44,6 @@ st.title("Code Generator")
 language = st.radio("Select Language:",
                     ["Python", "Java", "C#", "TypeScript", "Rust", "Kotlin"])
 
-# request = st.text_area('Please Detail Your Desired Use Case for Code Generation! ', height=500)
 app_name = st.text_input('Enter Project Name:')
 submit = st.button("submit", type="primary")
 
@@ -59,23 +51,11 @@ if language and submit and request and app_name:
 
     dir_path = app_name + '/'
 
-    requirements = product_manager_chain.run(request)
+    tech_design = product_manager_chain.run({'language': language, 'input': request})
     req_doc_path = dir_path + '/requirements' + '/requirements.txt'
-    safe_write(req_doc_path, requirements)
-    st.markdown(""" :blue[Business Requirements : ] """, unsafe_allow_html=True)
-    st.write(requirements)
-
-    tech_design = tech_lead_chain.run({'language': language, 'input': request})
-    tech_design_path = dir_path + '/tech_design' + '/tech_design.txt'
-    safe_write(tech_design_path, tech_design)
-    st.markdown(""" :blue[Technical Design :] """, unsafe_allow_html=True)
+    safe_write(req_doc_path, tech_design)
+    st.markdown(""" :blue[Tech Design : ] """, unsafe_allow_html=True)
     st.write(tech_design)
-
-    test_plan = test_lead_chain.run(requirements)
-    test_plan_path = dir_path + '/test_plan' + '/test_plan.txt'
-    safe_write(test_plan_path, test_plan)
-    st.markdown(""" :blue[Test Plan :] """, unsafe_allow_html=True)
-    st.write(test_plan)
 
     file_structure = file_structure_chain.run({'language': language, 'input': tech_design})
     file_structure_path = dir_path + '/file_structure' + '/file_structure.txt'
@@ -116,13 +96,14 @@ if language and submit and request and app_name:
 
             code = code_chain.predict(
                 language=language,
-                class_structure=tech_design,
-                structure=file_structure,
                 file=file,
+                tech_design=tech_design,
             )
 
             code_dict[file] = code
+
             response = missing_chain.run({'language': language, 'code': code})
+
             if '<TRUE>' in response:
                 missing = missing or missing_dict[file]
             else:
@@ -134,7 +115,7 @@ if language and submit and request and app_name:
             if missing_dict[file]:
                 new_classes = new_classes_chain.predict(
                     language=language,
-                    class_structure=tech_design,
+                    tech_design=tech_design,
                     code=code
                 )
                 new_classes_list.append(new_classes)

@@ -2,16 +2,39 @@ from langchain.callbacks import StreamingStdOutCallbackHandler
 from langchain.chains import LLMChain
 from langchain.chat_models import ChatOpenAI
 
-llm = ChatOpenAI(model_name='gpt-4-0125-preview',
+# gpt-3.5-turbo-0125
+# gpt-4-0125-preview
+
+llm = ChatOpenAI(model_name='gpt-3.5-turbo-0125',
                  streaming=True,
                  callbacks=[StreamingStdOutCallbackHandler()],
                  temperature=0
                  )
 
-prompt = """System: You are a product manager, and your job is to design software. You are provided a rough 
-description of the software. Expand on this description and generate the complete set of functionalities needed to 
-get that software to work. Don't hesitate to make design choices if the initial description doesn't provide enough 
-information. Don't generate code or unit tests!!
+prompt = """System: 
+
+You are a product manager, and expert in software design and and your job is to design working software.
+
+You are provided a rough description {input} of the software and the programming language {language} to use.
+
+You are required to come up with a technical design of the software covering the below.
+
+- The technology stack.
+- Full data model based on the attribute list
+- Full attribute validations based on the attribute validations 
+- Full business rules based on the business rules
+- API endpoints
+
+produce the output in the following format:
+- technology stack: <TECHNOLOGY STACK>
+- data model: <DATA MODEL>
+- attribute validations: <ATTRIBUTE VALIDATIONS>
+- business rules: <BUSINESS RULES>
+- api endpoints: <API ENDPOINTS>
+
+Don't generate code or unit tests at this stage and return only the above asked artefacts!!
+
+programming_language: {language}
 
 Human: {input}
 
@@ -23,46 +46,26 @@ product_manager_chain = LLMChain.from_string(
     template=prompt
 )
 
-prompt = """System: You are a Software engineering technical lead writing code in {language}. Your job is to come up 
-with a detailed description of all the necessary functions, classes, methods, unit tests for the code and attributes 
-for the following software description. Make sure to design a software that incorporates all the best practices of 
-software development. Make sure you describe how all the different classes and function interact between each other. 
-The resulting software should be a fully functional. Produce Mermaid class and sequence diagrams also as an output. 
-Don't generate code or unit tests!!
 
-language: {language}
+prompt = """
+System: You are an expert software engineer and your job is to design software in {language}. 
 
-Software description: {input}
+You are provided with the technical design {input} of the software and the programming language {language} to use.
 
-Software design:
-"""
+Produce the file structure for a fully working software based on the technical design:
 
-tech_lead_chain = LLMChain.from_string(
-    llm=llm,
-    template=prompt
-)
+PLEASE DO NOT INCLUDE THE UNIT TESTS IN THE FILE STRUCTURE.
 
-prompt = """System: You are a software testing engineer and your job is to design test plans for software. Provide a 
-detailed test plan and test cases to test the following software. Make sure to design a test plan that incorporates 
-all the best practices of software testing and limit the number of test cases to the minimum.
+Make sure to take all the aspects of the technical design into consideration and produce the file structure.
 
-Software description: {input}
+Some examples below:
 
-Software test plan:
+- If the technical design has a section for the data model, refer that section while generating the file structure. - 
+If the technical design has a section for the attribute validations, refer that section while generating the file 
+structure. - If the technical design has a section for the business rules, refer that section while generating the 
+file structure.
 
-"""
-
-test_lead_chain = LLMChain.from_string(
-    llm=llm,
-    template=prompt
-)
-
-prompt = """System: You are a software engineer and your job is to design software in {language}. Provide a detailed 
-description of the file structure with the required folders and {language} files. Make sure to design a file 
-structure that incorporates all the best practices of software development. Make sure you explain in which folder 
-each file belong to. Folder and file names should not contain any white spaces. A human should be able to exactly 
-recreate that file structure. Make sure that those files account for the design of the software.
-Don't generate non-{language} files.
+Don't generate non-{language} files or any other descriptions and produce JUST the file structure.
 
 language: {language}
 
@@ -98,20 +101,44 @@ file_path_chain = LLMChain.from_string(
     template=prompt
 )
 
-prompt = """System: You are a software engineer. Your job is to write {language} code. Write the code for the 
-following file using the following description. Only return code! The code should be able to run in a {language} 
-interpreter or compiler. Make sure to implement all the methods and functions. Make sure to import all the necessary 
-packages. The code should be complete.
+prompt = """
+System: You are an expert software engineer in {language}. 
+
+Your job is to write fully functional {language} code. 
+
+Write {language} code for the following file {file} using the following description {tech_design}.
+
+Refer the correct section of the technical design to write the code.
+
+Some examples below: 
+
+- If the technical design has a section for the data model, refer that section while generating code for the domain 
+class.
+- If the technical design has a section for the attribute validations, refer that section while generating code for
+the attribute validations.
+- If the technical design has a section for the business rules, refer that section while generating code for the
+business rules.
+
+DO NOT REGENERATE THE SAME CODE MORE THAN ONES! REFER THE ALREADY GENERATED CODE! RESPECT THE DRY PRINCIPLE!
+
+Some examples below: 
+
+- If you have already generated the domain class, do not generate it again. import that from the repository class or 
+a business services class 
+
+Only return fully functional {language} code and NOTHING ELSE! The code should be able to run in a {language} 
+interpreter or compiler.
+
+Make sure to implement all the methods and functions. Make sure to import all the necessary packages. The code should 
+be complete.
 
 language: {language}
 
-Files structure: {structure}
-
-Software description: {class_structure}
-
 File name: {file}
 
-{language} Code for this file:
+tech_design: {tech_design}
+
+code:
 
 """
 
@@ -137,17 +164,23 @@ missing_chain = LLMChain.from_string(
     template=prompt
 )
 
-prompt = """System: You are a software engineer. The following {language} code may contain non-implemented functions. If 
-the code contains non-implemented functions, describe what additional functions or classes you would need to 
-implement those missing implementations. Provide a detailed description of those additional classes or functions 
-that you need to implement. Make sure to design a software that incorporates all the best practices of software 
-development.
+prompt = """
+System: You are an expert {language} software engineer. 
+
+The following {language} code {code} may contain non-implemented functions.
+
+If the code contains non-implemented functions, describe what additional functions or classes you would need to 
+implement those missing implementations based on the technical design {tech_design}. 
+
+Provide a detailed description of those additional classes or functions that you need to implement.
+
+Make sure to design a software that incorporates all the best practices of {language} development.
 
 language: {language}
 
-Class description: {class_structure}
+tech_design: {tech_design}
 
-Code: {code}
+code: {code}
 
 Only return text if some functions are not implemented.
 

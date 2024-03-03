@@ -1,0 +1,688 @@
+
+
+As a product manager designing the `core_data_record_service` microservice, I will outline the complete set of functionalities and design choices for the software based on the provided description. Since the generation of code and unit tests is not required, I will focus on the design aspects and functionalities.
+
+### Software Functionalities and Design Choices:
+
+#### 1. Pydantic Model Definition:
+- Define a Pydantic model named `CDR` with the specified attributes.
+- Each attribute will be typed as `str` with optional constraints if needed.
+
+#### 2. Business Logic Implementation:
+- Implement a service class that will handle the instantiation of the `CDR` model and enforce the business rules.
+- The service class will have methods to validate the `CDR` instance against the business rules.
+
+#### 3. API Endpoints:
+- Create a Flask application with the necessary API endpoints to interact with the `core_data_record_service`.
+- Endpoints will include at least:
+  - `POST /cdr`: To create a new CDR record.
+  - `GET /cdr/{id}`: To retrieve a specific CDR record by its ID.
+  - Additional endpoints for updating and deleting records as needed.
+
+#### 4. Data Persistence:
+- Decide on a database or storage solution to persist the CDR records.
+- Implement data access layer to interact with the database.
+
+#### 5. Validation and Error Handling:
+- Implement input validation for API requests.
+- Define custom exceptions for handling business rule violations.
+- Implement error handling in the Flask application to return appropriate HTTP status codes and messages.
+
+#### 6. Logging and Monitoring:
+- Set up logging to track operations and errors.
+- Optionally, integrate monitoring tools to keep track of the service's health and performance.
+
+#### 7. Configuration and Deployment:
+- Create configuration files for different environments (development, testing, production).
+- Define the deployment process, which could include containerization with Docker and orchestration with Kubernetes or a cloud service provider.
+
+#### 8. Documentation:
+- Document the API endpoints using OpenAPI/Swagger for easy testing and integration by clients.
+- Write a README file with instructions on how to set up and run the service.
+
+#### 9. Security:
+- Implement security measures such as authentication and authorization if needed.
+- Ensure that sensitive data is handled securely.
+
+#### 10. Testing (Design Only):
+- Define a testing strategy that includes unit tests for business logic, integration tests for API endpoints, and possibly end-to-end tests.
+- Mock external dependencies for unit testing.
+
+### Design Choices:
+
+- **Database**: A lightweight database like SQLite could be used for simplicity, or a more robust solution like PostgreSQL if scalability is a concern.
+- **Validation**: Business rules will be implemented as methods within the service class that raise exceptions if the rules are violated.
+- **Error Handling**: Custom error handlers in Flask will catch exceptions and return meaningful HTTP responses.
+- **Security**: If the microservice requires security, integrate Flask extensions like Flask-Security or Flask-JWT for token-based authentication.
+- **Deployment**: Containerize the application using Docker for consistency across environments. Use environment variables for configuration settings.
+
+### Summary:
+
+The `core_data_record_service` will be a Flask microservice with a Pydantic model representing the CDR data structure. It will include a service class to enforce business rules, API endpoints for CRUD operations, and a data persistence layer. The service will have robust validation, error handling, logging, and potentially security measures. Documentation will be provided for ease of use, and a testing strategy will be outlined for ensuring the quality of the business logic.Software Design for `core_data_record_service` Flask Microservice
+
+### Overview
+The `core_data_record_service` is a Flask microservice designed to manage core data records (CDRs) with specific attributes and business rules. The service will use Pydantic for data validation and serialization.
+
+### Pydantic Model: `CDR`
+The `CDR` class will be a Pydantic model that includes the following attributes:
+
+- `policy_ref`: string
+- `group_policy_ref`: string
+- `facility_ref`: string
+- `unique_market_ref`: string
+- `placing_broker_contract_section_ref`: string
+- `Insurance`: string
+- `reinsurance`: string
+- `insurer_unique_identifier`: string
+- `platform`: string
+
+### Service Class: `CoreDataService`
+The `CoreDataService` class will encapsulate the business logic for the CDRs. It will have methods to create, update, and validate CDRs based on the business rules provided.
+
+#### Methods:
+- `create_cdr(data: dict) -> CDR`: Creates a new CDR instance from a dictionary of attributes.
+- `update_cdr(cdr_id: str, data: dict) -> CDR`: Updates an existing CDR by its ID.
+- `validate_cdr(cdr: CDR) -> bool`: Validates a CDR instance against the business rules.
+
+### Business Rules Implementation
+The business rules will be implemented as methods within the `CoreDataService` class. These methods will be called within the `validate_cdr` method.
+
+#### Business Rule Methods:
+- `validate_policy_ref(cdr: CDR) -> bool`: Validates the `policy_ref` attribute.
+- `validate_group_policy_ref(cdr: CDR) -> bool`: Validates the `group_policy_ref` attribute.
+- `validate_facility_ref(cdr: CDR) -> bool`: Validates the `facility_ref` attribute.
+
+### Flask Routes
+The Flask application will expose the following routes to interact with the CDRs:
+
+- `POST /cdr`: Creates a new CDR.
+- `PUT /cdr/<cdr_id>`: Updates an existing CDR.
+- `GET /cdr/<cdr_id>`: Retrieves a CDR by its ID.
+
+### Controller Functions
+Controller functions will handle the incoming HTTP requests and interact with the `CoreDataService` class.
+
+#### Controller Functions:
+- `create_cdr_endpoint()`: Handles the creation of a new CDR.
+- `update_cdr_endpoint(cdr_id)`: Handles the update of an existing CDR.
+- `get_cdr_endpoint(cdr_id)`: Retrieves a CDR by its ID.
+
+### Unit Tests
+Unit tests will be written to test all the business logic within the `CoreDataService` class. Each business rule will have a corresponding test case.
+
+#### Test Cases:
+- `test_validate_policy_ref()`: Tests the `validate_policy_ref` method.
+- `test_validate_group_policy_ref()`: Tests the `validate_group_policy_ref` method.
+- `test_validate_facility_ref()`: Tests the `validate_facility_ref` method.
+
+### Interaction Between Classes and Functions
+1. Flask routes call the appropriate controller function based on the HTTP request.
+2. Controller functions use the `CoreDataService` to create, update, or validate CDRs.
+3. The `CoreDataService` constructs or updates `CDR` instances using the Pydantic model.
+4. The `CoreDataService` calls the business rule methods to validate CDRs.
+5. The controller functions return the appropriate HTTP response (success or error) based on the service class outcomes.
+
+### Mermaid Class Diagram
+```mermaid
+classDiagram
+    class CDR {
+        -policy_ref: string
+        -group_policy_ref: string
+        -facility_ref: string
+        -unique_market_ref: string
+        -placing_broker_contract_section_ref: string
+        -Insurance: string
+        -reinsurance: string
+        -insurer_unique_identifier: string
+        -platform: string
+    }
+
+    class CoreDataService {
+        +create_cdr(data: dict) CDR
+        +update_cdr(cdr_id: str, data: dict) CDR
+        +validate_cdr(cdr: CDR) bool
+        -validate_policy_ref(cdr: CDR) bool
+        -validate_group_policy_ref(cdr: CDR) bool
+        -validate_facility_ref(cdr: CDR) bool
+    }
+
+    CDR <-- CoreDataService : Validates and manipulates
+```
+
+### Mermaid Sequence Diagram
+```mermaid
+sequenceDiagram
+    participant Client
+    participant FlaskApp
+    participant Controller
+    participant CoreDataService
+    participant CDR
+
+    Client->>FlaskApp: POST /cdr
+    FlaskApp->>Controller: create_cdr_endpoint()
+    Controller->>CoreDataService: create_cdr(data)
+    CoreDataService->>CDR: new CDR(data)
+    CDR-->>CoreDataService: CDR instance
+    CoreDataService->>CoreDataService: validate_cdr(cdr)
+    CoreDataService-->>Controller: CDR valid/invalid
+    Controller-->>FlaskApp: HTTP Response
+    FlaskApp-->>Client: CDR Created/Validation Error
+```
+
+This design ensures separation of concerns, with the Flask routes handling HTTP requests, the controller functions orchestrating the service logic, and the `CoreDataService` class managing the business rules and data manipulation. The unit tests will ensure that the business logic is correctly implemented and that the service behaves as expected.# Software Test Plan for `core_data_record_service` Microservice
+
+## 1. Introduction
+
+This test plan outlines the testing strategy and approach for the `core_data_record_service` microservice. The goal is to ensure that the software meets its requirements and functions correctly.
+
+## 2. Test Objectives
+
+- Validate the functionality of the Pydantic model `CDR`.
+- Ensure the business logic is correctly implemented and enforced.
+- Verify the API endpoints work as expected and handle errors properly.
+- Confirm data persistence works correctly with the chosen database.
+- Check that validation, error handling, logging, and security measures are effective.
+- Ensure the software is deployable and configurable across different environments.
+
+## 3. Test Items
+
+- Pydantic model `CDR`
+- Service class methods
+- API endpoints (`POST /cdr`, `GET /cdr/{id}`, etc.)
+- Data access layer and database interactions
+- Input validation and custom exception handling
+- Logging and monitoring functionality
+- Configuration and deployment processes
+- Security features (if implemented)
+
+## 4. Test Strategy
+
+### Unit Testing
+- Test individual methods of the service class.
+- Mock external dependencies like database calls.
+- Validate model constraints and default values.
+
+### Integration Testing
+- Test API endpoints with the service class and database.
+- Validate request and response formats.
+- Test error handling and response codes.
+
+### Security Testing
+- If applicable, test authentication and authorization mechanisms.
+- Check for secure handling of sensitive data.
+
+### Performance Testing
+- Test the service under load to ensure it meets performance requirements.
+
+### Regression Testing
+- Ensure that new changes do not break existing functionality.
+
+## 5. Test Environment
+
+- Local development environment for unit and integration tests.
+- Staging environment that mimics production for end-to-end tests.
+- Use Docker containers to ensure consistency.
+
+## 6. Test Deliverables
+
+- Test plan document
+- Test cases and scripts
+- Test execution reports
+- Defect reports
+- Test summary report
+
+## 7. Test Schedule
+
+Testing will be conducted in phases corresponding to the development cycle: unit testing during development, integration testing after API completion, and end-to-end testing in the staging environment.
+
+## 8. Test Cases
+
+### Unit Test Cases
+
+#### TC1: Test Pydantic Model Instantiation
+- **Objective**: Ensure the `CDR` model can be instantiated with valid data.
+- **Steps**: Create a `CDR` instance with valid attributes.
+- **Expected Result**: The instance is created without errors.
+
+#### TC2: Test Business Logic Validation
+- **Objective**: Validate that business rules are correctly enforced.
+- **Steps**: Attempt to create a `CDR` instance that violates business rules.
+- **Expected Result**: An appropriate exception is raised.
+
+### Integration Test Cases
+
+#### TC3: Test `POST /cdr` Endpoint
+- **Objective**: Ensure the `POST /cdr` endpoint creates a new CDR record.
+- **Steps**: Send a valid POST request to `/cdr`.
+- **Expected Result**: A new CDR record is created, and a 201 status code is returned.
+
+#### TC4: Test `GET /cdr/{id}` Endpoint
+- **Objective**: Ensure the `GET /cdr/{id}` endpoint retrieves a specific CDR record.
+- **Steps**: Retrieve an existing CDR record by its ID.
+- **Expected Result**: The correct CDR record is returned with a 200 status code.
+
+### Security Test Cases
+
+#### TC5: Test Authentication (if applicable)
+- **Objective**: Verify that protected endpoints require authentication.
+- **Steps**: Access a protected endpoint without credentials.
+- **Expected Result**: A 401 Unauthorized status code is returned.
+
+### Performance Test Cases
+
+#### TC6: Load Testing
+- **Objective**: Ensure the service can handle a high number of concurrent requests.
+- **Steps**: Simulate concurrent requests to the API.
+- **Expected Result**: The service handles the load with acceptable response times.
+
+## 9. Assumptions and Risks
+
+- Assumptions include the availability of a stable test environment and access to necessary tools.
+- Risks may include changes in requirements, technical challenges, and dependencies on external systems.
+
+## 10. Approvals
+
+The test plan must be reviewed and approved by the project stakeholders, including the development team, product manager, and quality assurance team.
+
+---
+
+This test plan provides a structured approach to testing the `core_data_record_service` microservice, ensuring that all functionalities are thoroughly verified and the software is reliable and ready for production use.Based on the software design for the `core_data_record_service` Flask microservice, the file structure should be organized to promote modularity, readability, and maintainability. Below is a detailed description of the recommended file structure, adhering to Python best practices:
+
+```
+core_data_record_service/
+│
+├── app/
+│   ├── __init__.py
+│   ├── main.py
+│   ├── models/
+│   │   ├── __init__.py
+│   │   └── cdr_model.py
+│   ├── services/
+│   │   ├── __init__.py
+│   │   └── core_data_service.py
+│   └── controllers/
+│       ├── __init__.py
+│       └── cdr_controller.py
+│
+├── tests/
+│   ├── __init__.py
+│   ├── test_core_data_service.py
+│   └── test_cdr_controller.py
+│
+└── requirements.txt
+```
+
+### Explanation of the File Structure:
+
+- `core_data_record_service/`: The root directory of the microservice.
+
+  - `app/`: This directory contains the Flask application and all its components.
+
+    - `__init__.py`: An empty file that indicates that the `app` directory should be treated as a Python package.
+
+    - `main.py`: The entry point of the Flask application where the app is initialized and routes are defined.
+
+    - `models/`: Contains the Pydantic models that define the structure of the data.
+
+      - `__init__.py`: An empty file that indicates that the `models` directory should be treated as a Python package.
+
+      - `cdr_model.py`: Defines the `CDR` Pydantic model with all the required attributes.
+
+    - `services/`: Contains the business logic and service classes.
+
+      - `__init__.py`: An empty file that indicates that the `services` directory should be treated as a Python package.
+
+      - `core_data_service.py`: Contains the `CoreDataService` class with methods for creating, updating, and validating CDRs, as well as the business rule methods.
+
+    - `controllers/`: Contains the controller functions that handle incoming HTTP requests.
+
+      - `__init__.py`: An empty file that indicates that the `controllers` directory should be treated as a Python package.
+
+      - `cdr_controller.py`: Contains the controller functions `create_cdr_endpoint`, `update_cdr_endpoint`, and `get_cdr_endpoint` that interact with the `CoreDataService`.
+
+  - `tests/`: This directory contains all the unit tests for the application.
+
+    - `__init__.py`: An empty file that indicates that the `tests` directory should be treated as a Python package.
+
+    - `test_core_data_service.py`: Contains the unit tests for the `CoreDataService` class, including tests for each business rule method.
+
+    - `test_cdr_controller.py`: Contains the unit tests for the controller functions in `cdr_controller.py`.
+
+  - `requirements.txt`: A file listing all the Python dependencies required by the microservice, which can be installed using `pip`.
+
+This file structure separates concerns into distinct directories and files, making it easier to navigate and maintain the codebase. The `app` directory is the core of the Flask application, with subdirectories for models, services, and controllers. The `tests` directory ensures that all components are properly tested. The `requirements.txt` file is essential for managing dependencies../app/__init__.py
+./app/main.py
+./app/models/__init__.py
+./app/models/cdr_model.py
+./app/services/__init__.py
+./app/services/core_data_service.py
+./app/controllers/__init__.py
+./app/controllers/cdr_controller.py
+./tests/__init__.py
+./tests/test_core_data_service.py
+./tests/test_cdr_controller.py
+./requirements.txt```python
+from flask import Flask
+from .controllers.cdr_controller import cdr_blueprint
+
+def create_app():
+    app = Flask(__name__)
+    app.register_blueprint(cdr_blueprint)
+    return app
+````<FALSE>````python
+# Import necessary packages
+from flask import Flask, request, jsonify
+from app.controllers.cdr_controller import create_cdr_endpoint, update_cdr_endpoint, get_cdr_endpoint
+
+# Initialize the Flask application
+app = Flask(__name__)
+
+# Define the route for creating a new CDR
+@app.route('/cdr', methods=['POST'])
+def create_cdr():
+    return create_cdr_endpoint()
+
+# Define the route for updating an existing CDR
+@app.route('/cdr/<cdr_id>', methods=['PUT'])
+def update_cdr(cdr_id):
+    return update_cdr_endpoint(cdr_id)
+
+# Define the route for retrieving a CDR by its ID
+@app.route('/cdr/<cdr_id>', methods=['GET'])
+def get_cdr(cdr_id):
+    return get_cdr_endpoint(cdr_id)
+
+# Run the Flask application if the script is executed directly
+if __name__ == '__main__':
+    app.run(debug=True)
+```<FALSE>```python
+# This is the __init__.py file for the models package within the core_data_record_service app.
+
+# The __init__.py file is used to initialize Python packages. This file can be left empty or can be used to
+# make package-wide settings or initializations for the models package.
+````<FALSE>````python
+from pydantic import BaseModel
+
+class CDR(BaseModel):
+    policy_ref: str
+    group_policy_ref: str
+    facility_ref: str
+    unique_market_ref: str
+    placing_broker_contract_section_ref: str
+    Insurance: str
+    reinsurance: str
+    insurer_unique_identifier: str
+    platform: str
+````<FALSE>````python
+# This is the __init__.py file for the services module within the core_data_record_service app.
+
+from .core_data_service import CoreDataService
+````<FALSE>````python
+# core_data_record_service/app/services/core_data_service.py
+
+from typing import Dict
+from app.models.cdr_model import CDR
+
+class CoreDataService:
+    def create_cdr(self, data: Dict) -> CDR:
+        # Create a new CDR instance from a dictionary of attributes
+        cdr = CDR(**data)
+        if self.validate_cdr(cdr):
+            # Save the CDR instance to the database (pseudo code)
+            # db.save(cdr)
+            return cdr
+        else:
+            raise ValueError("CDR validation failed")
+
+    def update_cdr(self, cdr_id: str, data: Dict) -> CDR:
+        # Update an existing CDR by its ID (pseudo code)
+        # cdr = db.find_by_id(cdr_id)
+        # if not cdr:
+        #     raise ValueError("CDR not found")
+        # Update the CDR instance with new data
+        cdr = CDR(**data)  # This is a placeholder for actual update logic
+        if self.validate_cdr(cdr):
+            # Save the updated CDR instance to the database (pseudo code)
+            # db.update(cdr)
+            return cdr
+        else:
+            raise ValueError("CDR validation failed")
+
+    def validate_cdr(self, cdr: CDR) -> bool:
+        # Validate a CDR instance against the business rules
+        return (
+            self.validate_policy_ref(cdr) and
+            self.validate_group_policy_ref(cdr) and
+            self.validate_facility_ref(cdr)
+        )
+
+    def validate_policy_ref(self, cdr: CDR) -> bool:
+        # Implement the logic to validate the policy_ref attribute
+        # For example:
+        return cdr.policy_ref is not None and len(cdr.policy_ref) > 0
+
+    def validate_group_policy_ref(self, cdr: CDR) -> bool:
+        # Implement the logic to validate the group_policy_ref attribute
+        # For example:
+        return cdr.group_policy_ref is not None and len(cdr.group_policy_ref) > 0
+
+    def validate_facility_ref(self, cdr: CDR) -> bool:
+        # Implement the logic to validate the facility_ref attribute
+        # For example:
+        return cdr.facility_ref is not None and len(cdr.facility_ref) > 0
+```<FALSE>```python
+# This is the __init__.py file for the controllers package
+
+from .cdr_controller import create_cdr_endpoint, update_cdr_endpoint, get_cdr_endpoint
+
+__all__ = ["create_cdr_endpoint", "update_cdr_endpoint", "get_cdr_endpoint"]
+````<FALSE>````python
+# Import necessary packages
+from flask import request, jsonify
+from app.services.core_data_service import CoreDataService
+from app.models.cdr_model import CDR
+
+# Initialize the CoreDataService
+core_data_service = CoreDataService()
+
+def create_cdr_endpoint():
+    try:
+        # Parse the JSON data from the request
+        data = request.get_json()
+        # Create a new CDR instance
+        cdr = core_data_service.create_cdr(data)
+        # Validate the CDR instance
+        if core_data_service.validate_cdr(cdr):
+            # If valid, return success response
+            return jsonify(cdr.dict()), 201
+        else:
+            # If not valid, return error response
+            return jsonify({"error": "Validation failed"}), 400
+    except Exception as e:
+        # Handle unexpected errors
+        return jsonify({"error": str(e)}), 500
+
+def update_cdr_endpoint(cdr_id):
+    try:
+        # Parse the JSON data from the request
+        data = request.get_json()
+        # Update the CDR instance
+        cdr = core_data_service.update_cdr(cdr_id, data)
+        # Validate the updated CDR instance
+        if core_data_service.validate_cdr(cdr):
+            # If valid, return success response
+            return jsonify(cdr.dict()), 200
+        else:
+            # If not valid, return error response
+            return jsonify({"error": "Validation failed"}), 400
+    except Exception as e:
+        # Handle unexpected errors
+        return jsonify({"error": str(e)}), 500
+
+def get_cdr_endpoint(cdr_id):
+    try:
+        # Retrieve the CDR instance by its ID
+        cdr = core_data_service.get_cdr(cdr_id)
+        if cdr:
+            # If found, return the CDR instance
+            return jsonify(cdr.dict()), 200
+        else:
+            # If not found, return error response
+            return jsonify({"error": "CDR not found"}), 404
+    except Exception as e:
+        # Handle unexpected errors
+        return jsonify({"error": str(e)}), 500
+```<FALSE>```python
+# This is an empty file that indicates that the tests directory should be treated as a Python package.
+# No additional code is needed here for this purpose.
+
+# ./tests/__init__.py
+```
+`<FALSE>````python
+import unittest
+from app.services.core_data_service import CoreDataService
+from app.models.cdr_model import CDR
+
+class TestCoreDataService(unittest.TestCase):
+
+    def setUp(self):
+        self.service = CoreDataService()
+
+    def test_create_cdr(self):
+        data = {
+            "policy_ref": "POLICY123",
+            "group_policy_ref": "GROUP123",
+            "facility_ref": "FACILITY123",
+            "unique_market_ref": "MARKET123",
+            "placing_broker_contract_section_ref": "SECTION123",
+            "Insurance": "Insurance123",
+            "reinsurance": "Reinsurance123",
+            "insurer_unique_identifier": "IDENTIFIER123",
+            "platform": "PLATFORM123"
+        }
+        cdr = self.service.create_cdr(data)
+        self.assertIsInstance(cdr, CDR)
+        for key, value in data.items():
+            self.assertEqual(getattr(cdr, key), value)
+
+    def test_update_cdr(self):
+        cdr_id = "CDR123"
+        data = {
+            "policy_ref": "POLICY456",
+            "group_policy_ref": "GROUP456",
+            "facility_ref": "FACILITY456",
+            "unique_market_ref": "MARKET456",
+            "placing_broker_contract_section_ref": "SECTION456",
+            "Insurance": "Insurance456",
+            "reinsurance": "Reinsurance456",
+            "insurer_unique_identifier": "IDENTIFIER456",
+            "platform": "PLATFORM456"
+        }
+        cdr = self.service.update_cdr(cdr_id, data)
+        self.assertIsInstance(cdr, CDR)
+        for key, value in data.items():
+            self.assertEqual(getattr(cdr, key), value)
+
+    def test_validate_policy_ref(self):
+        cdr = CDR(
+            policy_ref="POLICY123",
+            group_policy_ref="GROUP123",
+            facility_ref="FACILITY123",
+            unique_market_ref="MARKET123",
+            placing_broker_contract_section_ref="SECTION123",
+            Insurance="Insurance123",
+            reinsurance="Reinsurance123",
+            insurer_unique_identifier="IDENTIFIER123",
+            platform="PLATFORM123"
+        )
+        self.assertTrue(self.service.validate_policy_ref(cdr))
+
+    def test_validate_group_policy_ref(self):
+        cdr = CDR(
+            policy_ref="POLICY123",
+            group_policy_ref="GROUP123",
+            facility_ref="FACILITY123",
+            unique_market_ref="MARKET123",
+            placing_broker_contract_section_ref="SECTION123",
+            Insurance="Insurance123",
+            reinsurance="Reinsurance123",
+            insurer_unique_identifier="IDENTIFIER123",
+            platform="PLATFORM123"
+        )
+        self.assertTrue(self.service.validate_group_policy_ref(cdr))
+
+    def test_validate_facility_ref(self):
+        cdr = CDR(
+            policy_ref="POLICY123",
+            group_policy_ref="GROUP123",
+            facility_ref="FACILITY123",
+            unique_market_ref="MARKET123",
+            placing_broker_contract_section_ref="SECTION123",
+            Insurance="Insurance123",
+            reinsurance="Reinsurance123",
+            insurer_unique_identifier="IDENTIFIER123",
+            platform="PLATFORM123"
+        )
+        self.assertTrue(self.service.validate_facility_ref(cdr))
+
+if __name__ == '__main__':
+    unittest.main()
+````<FALSE>````python
+import unittest
+from unittest.mock import patch
+from app.controllers.cdr_controller import create_cdr_endpoint, update_cdr_endpoint, get_cdr_endpoint
+from app.services.core_data_service import CoreDataService
+from app.models.cdr_model import CDR
+from flask import Flask, request
+
+app = Flask(__name__)
+
+class TestCDRController(unittest.TestCase):
+
+    def setUp(self):
+        self.client = app.test_client()
+        self.cdr_data = {
+            "policy_ref": "POLICY123",
+            "group_policy_ref": "GROUP123",
+            "facility_ref": "FACILITY123",
+            "unique_market_ref": "MARKET123",
+            "placing_broker_contract_section_ref": "SECTION123",
+            "Insurance": "Insurance123",
+            "reinsurance": "Reinsurance123",
+            "insurer_unique_identifier": "IDENTIFIER123",
+            "platform": "PLATFORM123"
+        }
+        self.cdr_id = "CDR123"
+
+    @patch.object(CoreDataService, 'create_cdr')
+    def test_create_cdr_endpoint(self, mock_create_cdr):
+        mock_create_cdr.return_value = CDR(**self.cdr_data)
+        with app.test_request_context('/cdr', method='POST', json=self.cdr_data):
+            response = create_cdr_endpoint()
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.json, self.cdr_data)
+
+    @patch.object(CoreDataService, 'update_cdr')
+    def test_update_cdr_endpoint(self, mock_update_cdr):
+        mock_update_cdr.return_value = CDR(**self.cdr_data)
+        with app.test_request_context(f'/cdr/{self.cdr_id}', method='PUT', json=self.cdr_data):
+            response = update_cdr_endpoint(self.cdr_id)
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.json, self.cdr_data)
+
+    @patch.object(CoreDataService, 'get_cdr')
+    def test_get_cdr_endpoint(self, mock_get_cdr):
+        mock_get_cdr.return_value = CDR(**self.cdr_data)
+        with app.test_request_context(f'/cdr/{self.cdr_id}', method='GET'):
+            response = get_cdr_endpoint(self.cdr_id)
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.json, self.cdr_data)
+
+if __name__ == '__main__':
+    unittest.main()
+````<FALSE>````plaintext
+Flask==2.1.2
+Pydantic==1.9.0
+```
+`<FALSE>`
+
